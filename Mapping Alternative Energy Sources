@@ -110,9 +110,9 @@ onEachFeature: function(feature,layer) {
 var geothermalLayer = L.geoJson(plants, {
           pointToLayer: function(feature,latlng) {
               return L.circleMarker(latlng, {
-                 color: '#cc00cc',
+                 color: '#8b00cc',
                  weight: 1,
-                 fillColor: '#cc00cc',
+                 fillColor: '#8b00cc',
                  fillOpacity: .6,
                  radius: getRadius(feature.properties.capacity_mw)
               });   
@@ -127,7 +127,7 @@ onEachFeature: function(feature,layer) {
         layer.bindTooltip(feature.properties.plant_name).openTooltip();
     });
     layer.on('mouseout', function() {
-        layer.setStyle({fillColor: '#cc00cc'});
+        layer.setStyle({fillColor: '#8b00cc'});
     });
 }
 
@@ -164,7 +164,7 @@ onEachFeature: function(feature,layer) {
 
      var sourcesLayers = {
           "<span style='color: #ff6600'>Biomass</span>": biomassLayer,
-          "<span style='color: #cc00cc'>Geothermal</span>": geothermalLayer,
+          "<span style='color: #8b00cc'>Geothermal</span>": geothermalLayer,
           "<span style='color: #ffcc00'>Solar</span>": solarLayer
       };
 
