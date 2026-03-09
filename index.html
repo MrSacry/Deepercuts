@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Interactive Map with Leaflet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Interactive Map</h1>
+    <div id="map"></div>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([51.505, -0.09], 13);
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        // Add markers
+        var marker1 = L.marker([51.5, -0.09]).addTo(map);
+        marker1.bindPopup('<b>Hello!</b><br>I am a popup.');
+
+        var marker2 = L.marker([51.51, -0.1]).addTo(map);
+        marker2.bindPopup('<b>Hello again!</b><br>I am another popup.');
+
+        // Add a circle
+        var circle = L.circle([51.508, -0.11], {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.5,
+            radius: 500
+        }).addTo(map);
+        circle.bindPopup('I am a circle.');
+
+        // Add a polygon
+        var polygon = L.polygon([
+            [51.509, -0.08],
+            [51.503, -0.06],
+            [51.51, -0.047]
+        ]).addTo(map);
+        polygon.bindPopup('I am a polygon.');
+
+        // Add layer control
+        var baseMaps = {
+            "OpenStreetMap": layer,
+        };
+        var overlays = {
+            "Marker 1": marker1,
+            "Marker 2": marker2,
+            "Circle": circle,
+            "Polygon": polygon
+        };
+
+        L.control.layers(baseMaps, overlays).addTo(map);
+    </script>
+</body>
+</html>
