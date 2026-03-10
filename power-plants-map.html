@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Power Plants Map</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+        }
+        header {
+            padding: 6px 10%;
+            background: #f4f4f4;
+        }
+        h1 {
+            margin: 0;
+            color: #001323;
+        }
+        #map {
+            width: 100%;
+            height: calc(100vh - 80px);
+        }
+        .legend {
+            background: white;
+            padding: 10px 14px;
+            border-radius: 4px;
+            line-height: 1.8em;
+            font-size: 14px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>US Power Plants</h1>
+    </header>
+
+    <div id="map"></div>
+
+    <script src="Power%20Plants"></script>
+    <script>
+        var map = L.map('map', {
+            center: [39, -96],
+            zoom: 4
+        });
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        function getColor(fuelSource) {
+            if (fuelSource['Solar']) return '#ffff00';
+            if (fuelSource['Geothermal']) return '#ff8800';
+            if (fuelSource['Biomass']) return '#0000ff';
+            return '#777777';
+        }
+
+        function getFuelName(fuelSource) {
+            return Object.keys(fuelSource).join(', ');
+        }
+
+        L.geoJson(plants, {
+            pointToLayer: function (feature, latlng) {
+                var color = getColor(feature.properties.fuel_source);
+                return L.circleMarker(latlng, {
+                    radius: 7,
+                    color: color,
+                    weight: 1,
+                    fillColor: color,
+                    fillOpacity: 0.8
+                });
+            },
+            onEachFeature: function (feature, layer) {
+                var p = feature.properties;
+                var fuelName = getFuelName(p.fuel_source);
+                var capacity = (p.capacity_mw != null) ? p.capacity_mw.toLocaleString() + ' MW' : 'N/A';
+                layer.bindPopup(
+                    '<b>' + p.plant_name + '</b><br>' +
+                    'Capacity: ' + capacity + '<br>' +
+                    'Fuel: ' + fuelName
+                );
+            }
+        }).addTo(map);
+
+        var legend = L.control({ position: 'bottomright' });
+        legend.onAdd = function () {
+            var div = L.DomUtil.create('div', 'legend');
+            div.innerHTML =
+                '<strong>Fuel Source</strong><br>' +
+                '<div class="legend-item"><span class="legend-dot" style="background:#ffff00;border:1px solid #aaa"></span> Solar</div>' +
+                '<div class="legend-item"><span class="legend-dot" style="background:#ff8800"></span> Geothermal</div>' +
+                '<div class="legend-item"><span class="legend-dot" style="background:#0000ff"></span> Biomass</div>' +
+                '<div class="legend-item"><span class="legend-dot" style="background:#777777"></span> Other</div>';
+            return div;
+        };
+        legend.addTo(map);
+    </script>
+</body>
+
+</html>
